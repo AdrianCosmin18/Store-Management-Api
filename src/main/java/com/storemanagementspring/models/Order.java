@@ -1,24 +1,22 @@
 package com.storemanagementspring.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order")
 @Entity(name = "Order")
-@ToString
-public class Order {//Many to One cu Product
+@Table(name = "orders")
+public class Order {
 
     @Id
     @SequenceGenerator(name = "order_seq", allocationSize = 1)
@@ -47,10 +45,9 @@ public class Order {//Many to One cu Product
     @JsonBackReference
     private Customer customer;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     @LazyCollection(LazyCollectionOption.FALSE)
     Set<OrderDetails> ordersDetails;
-
 
 }

@@ -1,13 +1,14 @@
 package com.storemanagementspring.models;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
+
 
 @Data
 @AllArgsConstructor
@@ -34,7 +35,7 @@ public class Customer {//one to many cu Order
     @Column(name = "role", nullable = false)
     private String role;
 
-    @Column(name = "phone", nullable = false, unique = true)
+    @Column(name = "phone", nullable = false) //de ce nu pot folosi unique, eroare ca ar fi cheia prea lunga
     private String phone;
 
     public Customer(String fullName, String email, String password, String role, String phone) {
@@ -45,6 +46,6 @@ public class Customer {//one to many cu Order
         this.phone = phone;
     }
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Order> orders = new HashSet<>();
 }
