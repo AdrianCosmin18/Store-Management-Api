@@ -1,9 +1,7 @@
 package com.storemanagementspring.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
@@ -16,6 +14,7 @@ import java.util.Set;
 @ToString
 @Entity(name = "Customer")
 @Table(name = "customer")
+@Builder
 public class Customer {//one to many cu Order
 
     @Id
