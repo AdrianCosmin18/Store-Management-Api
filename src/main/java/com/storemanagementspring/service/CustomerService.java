@@ -42,6 +42,28 @@ public class CustomerService {
         }
         customerRepo.save(new Customer(customerDTO.getFullName(), customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getRole(), customerDTO.getPhone()));
     }
+
+    public void deleteCustomerById(Long id){
+
+        if (!customerRepo.findById(id).isPresent()){
+            throw new RuntimeException("ERROR: there is no customer with this id: " + id);
+        }
+
+        customerRepo.deleteById(id);
+    }
+
+    public void updateCustomerById(Long id, CustomerDTO customerDTO){
+
+        if(customerRepo.findById(id).isEmpty()){
+            throw new RuntimeException("ERROR: There is no customer with this id: " + id);
+        }else if(customerRepo.getCustomersByEmail(customerDTO.getEmail()).isPresent()){
+            throw new RuntimeException("ERROR: already exists a customer with this email: " + customerDTO.getEmail());
+        } else if (customerRepo.getCustomersByPhone(customerDTO.getPhone()).isPresent()) {
+            throw new RuntimeException("ERROR: already exists a customer with this phone: " + customerDTO.getEmail());
+        }
+
+        customerRepo.updateCustomerById(id, customerDTO.getFullName(), customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getRole(), customerDTO.getPhone());
+    }
 }
 
 

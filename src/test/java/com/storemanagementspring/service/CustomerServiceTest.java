@@ -16,6 +16,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
@@ -73,7 +74,7 @@ class CustomerServiceTest {
         CustomerDTO customerDTO = CustomerDTO.builder().email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Adrian Cosmin").phone("0773941106").role("admin").build();
 
         Mockito.when(customerRepo.getCustomersByEmail(customerDTO.getEmail())).thenReturn(Optional.empty());
-        Mockito.when(customerRepo.getCustomersByEmail(customerDTO.getEmail())).thenReturn(Optional.empty());
+        Mockito.when(customerRepo.getCustomersByPhone(customerDTO.getPhone())).thenReturn(Optional.empty());
         customerService.addCustomer(customerDTO);
         then(customerRepo).should().save(customerArgumentCaptor.capture());
         assertThat(customerArgumentCaptor.getValue()).isEqualTo(new Customer(customerDTO.getFullName(), customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getRole(), customerDTO.getPhone()));
@@ -95,6 +96,52 @@ class CustomerServiceTest {
 
         Mockito.when(customerRepo.getCustomersByEmail(customer.getEmail())).thenReturn(Optional.of(customer));
         assertThrows(RuntimeException.class, () -> customerService.addCustomer(customerDTO));
+    }
 
+    @Test
+    void shouldDeleteCustomerById(){
+        Customer customer = Customer.builder().id(1L).email("cosmin_ndlc@yahoo.com").phone("0773941106").build();
+        Mockito.when(customerRepo.findById(1L)).thenReturn(Optional.of(customer));
+        customerService.deleteCustomerById(customer.getId());
+        then(customerRepo).should().deleteById(customer.getId());
+    }
+
+    @Test
+    void  shouldThrowExceptionDeleteCustomerById(){
+        Customer customer = Customer.builder().id(1L).email("cosmin_ndlc@yahoo.com").phone("0773941106").build();
+        Mockito.when(customerRepo.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> customerService.deleteCustomerById(customer.getId()));
+    }
+
+    @Test
+    void shouldUpdateCustomerById(){
+        Customer customer = Customer.builder().id(1L).email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Adrian Cosmin").phone("0773941106").role("admin").build();
+        CustomerDTO customerDTO = CustomerDTO.builder().email("cosmin1304@yahoo.com").fullName("Nedelcu Cosmin").phone("0773941080").role("admin").build();
+
+        Mockito.when(customerRepo.findById(customer.getId())).thenReturn(Optional.of(customer));
+        Mockito.when(customerRepo.getCustomersByEmail(customerDTO.getEmail())).thenReturn(Optional.empty());
+        Mockito.when(customerRepo.getCustomersByEmail(customerDTO.getEmail())).thenReturn(Optional.empty());
+        customerService.updateCustomerById(1L, customerDTO);
+        then(customerRepo).should().updateCustomerById(1L, customerDTO.getFullName(), customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getRole(), customerDTO.getPhone());
+    }
+
+    @Test
+    void shouldThrowException2UpdateCustomerById(){
+        Customer customer = Customer.builder().id(1L).email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Adrian Cosmin").phone("0773941106").role("admin").build();
+        CustomerDTO customerDTO = CustomerDTO.builder().email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Cosmin").phone("0773941080").role("admin").build();
+
+        Mockito.when(customerRepo.findById(customer.getId())).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> customerService.updateCustomerById(1L, customerDTO));
+    }
+
+    @Test
+    void shouldThrowException3UpdateCustomerById(){
+        Customer customer = Customer.builder().id(1L).email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Adrian Cosmin").phone("0773941106").role("admin").build();
+        CustomerDTO customerDTO = CustomerDTO.builder().email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Cosmin").phone("0773941080").role("admin").build();
+
+        Mockito.when(customerRepo.findById(customer.getId())).thenReturn(Optional.of(customer));
+        Mockito.when(customerRepo.getCustomersByEmail(customerDTO.getEmail())).thenReturn(Optional.empty());
+        Mockito.when(customerRepo.getCustomersByPhone(customerDTO.getPhone())).thenReturn(Optional.of(customer));
+        assertThrows(RuntimeException.class, () -> customerService.updateCustomerById(1L, customerDTO));
     }
 }

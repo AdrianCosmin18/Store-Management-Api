@@ -1,10 +1,7 @@
 package com.storemanagementspring.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -18,6 +15,7 @@ import java.util.Set;
 @Table(name = "product")
 @Entity(name = "Product")
 @ToString
+@Builder
 public class Product {//one to many cu OrderDetails
 
     @Id
