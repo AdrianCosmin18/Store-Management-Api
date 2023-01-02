@@ -57,7 +57,6 @@ public class ProductService {
     public void updateProductById(Long id, ProductDTO productDTO){
 
         Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("ERROR: There is no product with this id: " + id));
-
         if(productRepo.getProductsByBrandAndAndName(productDTO.getBrand(), productDTO.getName()).isPresent()){
             throw new RuntimeException("ERROR: There is already a product with the same brand and name");
         }
