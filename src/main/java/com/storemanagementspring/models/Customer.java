@@ -37,14 +37,26 @@ public class Customer {//one to many cu Order
     @Column(name = "phone", nullable = false) //de ce nu pot folosi unique, eroare ca ar fi cheia prea lunga
     private String phone;
 
-    public Customer(String fullName, String email, String password, String role, String phone) {
+    @Column(name = "address", nullable = false)
+    private String address;
+
+    public Customer(String fullName, String email, String password, String role, String phone, String address) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.role = role;
         this.phone = phone;
+        this.address = address;
     }
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Order> orders = new HashSet<>();
+
+    public void addOrder(Order order){
+        this.orders.add(order);
+    }
+
+    public void deleteOrder(Order order){
+        this.orders.remove(order);
+    }
 }

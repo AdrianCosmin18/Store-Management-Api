@@ -49,6 +49,9 @@ public class Product {//one to many cu OrderDetails
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     @LazyCollection(LazyCollectionOption.FALSE)
-    Set<OrderDetails> ordersDetails;
+    Set<OrderDetails> ordersDetailsSet;
 
+    public void addOrderDetails(OrderDetails orderDetails){
+        this.ordersDetailsSet.add(orderDetails);
+    }
 }

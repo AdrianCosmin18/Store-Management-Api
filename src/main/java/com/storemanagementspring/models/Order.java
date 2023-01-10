@@ -50,6 +50,13 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonBackReference
     @LazyCollection(LazyCollectionOption.FALSE)
-    Set<OrderDetails> ordersDetails;
+    Set<OrderDetails> ordersDetailsSet;
 
+    public void addOrderDetails(OrderDetails orderDetails){
+        this.ordersDetailsSet.add(orderDetails);
+    }
+
+    public void deleteOrderDetails(OrderDetails orderDetails){
+        this.ordersDetailsSet.remove(orderDetails);
+    }
 }

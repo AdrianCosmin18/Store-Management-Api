@@ -30,7 +30,4 @@ public class OrderDetailsService {
         return orderDetailsList;
     }
 
-    public void addOrderDetail(OrderDetailsDTO orderDetailsDTO){
-
-    }
 }
