@@ -71,13 +71,13 @@ class CustomerServiceTest {
     @Test
     void shouldAddCustomer(){
 
-        CustomerDTO customerDTO = CustomerDTO.builder().email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Adrian Cosmin").phone("0773941106").role("admin").build();
+        CustomerDTO customerDTO = CustomerDTO.builder().email("cosmin_ndlc@yahoo.com").fullName("Nedelcu Adrian Cosmin").phone("0773941106").role("admin").address("Romania").build();
 
         Mockito.when(customerRepo.getCustomersByEmail(customerDTO.getEmail())).thenReturn(Optional.empty());
         Mockito.when(customerRepo.getCustomersByPhone(customerDTO.getPhone())).thenReturn(Optional.empty());
         customerService.addCustomer(customerDTO);
         then(customerRepo).should().save(customerArgumentCaptor.capture());
-        assertThat(customerArgumentCaptor.getValue()).isEqualTo(new Customer(customerDTO.getFullName(), customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getRole(), customerDTO.getPhone()));
+        assertThat(customerArgumentCaptor.getValue()).isEqualTo(new Customer(customerDTO.getFullName(), customerDTO.getEmail(), customerDTO.getPassword(), customerDTO.getRole(), customerDTO.getPhone(), customerDTO.getAddress()));
     }
 
     @Test

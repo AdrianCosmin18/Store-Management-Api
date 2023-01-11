@@ -17,4 +17,7 @@ public interface ProductRepo extends JpaRepository<Product, Long> {
 
     @Query("update Product p set p.brand = ?2, p.name = ?3, p.price = ?4, p.stock = ?5, p.description = ?6 where p.id = ?1")
     void updateProductById(Long id, String brand, String name, Double price, Integer stock, String description);
+
+    @Query("SELECT p FROM Product p JOIN p.ordersDetailsSet o GROUP BY p.id HAVING SUM(o.quantity) = (SELECT MAX(SUM(o.quantity)) FROM Product p JOIN p.ordersDetailsSet o GROUP BY p.id)")
+    List<Product> findMostSoldProducts();
 }

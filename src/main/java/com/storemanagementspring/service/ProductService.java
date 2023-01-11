@@ -1,19 +1,24 @@
 package com.storemanagementspring.service;
 
 import com.storemanagementspring.dto.ProductDTO;
+import com.storemanagementspring.models.OrderDetails;
 import com.storemanagementspring.models.Product;
+import com.storemanagementspring.repos.OrderDetailsRepo;
 import com.storemanagementspring.repos.ProductRepo;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProductService {
 
     private ProductRepo productRepo;
+    private OrderDetailsRepo orderDetailsRepo;
 
-    public ProductService(ProductRepo productRepo) {
+    public ProductService(ProductRepo productRepo, OrderDetailsRepo orderDetailsRepo) {
         this.productRepo = productRepo;
+        this.orderDetailsRepo = orderDetailsRepo;
     }
 
     public List<Product> getProducts(){
@@ -38,6 +43,7 @@ public class ProductService {
         return products;
     }
 
+    @Modifying
     public void addProduct(ProductDTO productDTO){
 
         if(productRepo.getProductsByBrandAndAndName(productDTO.getBrand(), productDTO.getName()).isPresent()){
@@ -61,5 +67,48 @@ public class ProductService {
             throw new RuntimeException("ERROR: There is already a product with the same brand and name");
         }
         productRepo.updateProductById(id, productDTO.getBrand(), productDTO.getName(), productDTO.getPrice(), productDTO.getStock(), productDTO.getDescription());
+    }
+
+    public List<Product> getBestSoldProducts(){
+
+        List<OrderDetails> orderDetailsList = orderDetailsRepo.findAll();
+        if(orderDetailsList.size() == 0){
+            throw new RuntimeException("ERROR: There is no product sold yet");
+        }
+        Map<Product, Integer> map = new HashMap<>();
+
+        for(OrderDetails orderDetails: orderDetailsList){
+
+            Product product = orderDetails.getProduct();
+
+            if(map.containsKey(orderDetails.getProduct())){
+                map.put(product, map.get(product) + orderDetails.getQuantity());
+            }else{
+                map.put(product, orderDetails.getQuantity());
+            }
+        }
+
+        Collection<Integer> quantities = map.values();
+        int maxQuantity = Collections.max(quantities);
+        List<Product> productList = new ArrayList<>();
+        System.out.println("quantities maxim:" + maxQuantity);
+
+        for (Map.Entry<Product, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == maxQuantity) {
+                productList.add(entry.getKey());
+            }
+        }
+        System.out.println(productList);
+        return productList;
+    }
+
+    //nu stiu daca merge
+    public List<Product> getBestSoldProductsWithQuery(){
+        List<Product> products = productRepo.findMostSoldProducts();
+        if (products.isEmpty()){
+            throw new RuntimeException("ERROR: There is no product sold yet");
+        }
+        System.out.println(products);
+        return products;
     }
 }
